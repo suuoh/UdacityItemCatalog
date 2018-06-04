@@ -83,6 +83,6 @@ class Game(Base):
         }
 
 # Configuration
-engine = create_engine("sqlite:///videogamecatalog.db")
+engine = create_engine('postgresql://catalog:I8vke78B9a@localhost/videogamecatalog')
 
 Base.metadata.create_all(engine)

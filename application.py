@@ -20,12 +20,12 @@ from datetime import date
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/UdacityItemCatalog/client_secrets.json', 'r').read())['web']['client_id']
 
 APPLICATION_NAME = "Video Game Catalog"
 
 # Create session and connect to database
-engine = create_engine('sqlite:///videogamecatalog.db')
+engine = create_engine('postgresql://catalog:I8vke78B9a@localhost/videogamecatalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 dbsession = DBSession()
@@ -318,4 +318,4 @@ def getUserID(email):
 if __name__ == '__main__':
     app.secret_key = 'my_favourite_game'
     app.debug = True
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='35.182.139.132', port=80)
