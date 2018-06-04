@@ -1,84 +1,85 @@
 # Udacity Linux Server Configuration Guide
 ### Based on [this guide](https://github.com/hicham-alaoui/ha-linux-server-config) by [@hicham-alaoui](https://github.com/hicham-alaoui).
+**NOTE:** Modified details to my situation and process, but did not change order of steps.
 
 ## Step A: The Lightsail instance  
 ### 1. Create a Lightsail instance in AWS
-* Click on the “Services” link in the top navbar
-* Under the “Compute section, select Lightsail
+* Go to [Amazon Lightsail](https://lightsail.aws.amazon.com/ls/webapp)
 * Inside the Lightsail page, click on “Create instance” page
-* Under “Select Blueprint” section click on “OS Only”
-* Select “Ubuntu”
-* Select a plan. Usually the first basic plan, free for the first month then $5 afterwards
-* Under “Name your instance”, rename your instance if you wish to
+* Under “Select Blueprint” section click on “OS Only” and select “Ubuntu”
+* Select a plan. The first plan is free for the first month then $5 afterwards
 * Click the “Create” button. The instance will take few moments to appear on the instances page  
+
 ### 2. Download the Lightsail default private key to local device
-* In the instances page click on the instance name to open the settings page.
+* On the dashboard, click on the instance name to open the settings page.
 * Scroll all the way down to the bottom of the page and click on the blue “Account page” link
-* Click on “download” at the bottom of the page, name and save the file on your local device then ssh into your Lightsail server : sudo ssh ubuntu@35.178.90.82 -i lightsail_key.pem)  
+* Click on “download” at the bottom of the page, name and save the file on your local device
+* SSH into your Lightsail server: `sudo ssh ubuntu@35.182.139.132 -i lightsail_key.pem` 
+
 ### 3. Add ports 2200/tcp and 123/udp
-* On your instance page click on the “Networking” tab,
-* Under “Firewall” section, click on “+Add another” at the bottom of the ports list,
-* Add ports as follow: Custom: TCP:2200, and Custom:UDP:123. (after adding these two ports the list should include at least four ports, 22, 80, 2200, and 123)
+* On your instance page click on the “Networking” tab
+* Under “Firewall” section, click on “Add another” at the bottom of the ports list
+* Add ports as follow: Custom TCP 2200 and Custom UDP 123. (There should already be HTTP TCP 80 and SSH TCP 22)
 * Click “Save”
 
 ### 4. Update your Linux server
-* Connect to the linux server via either the Lightsail page ssh connect link or local gitbash as explained above. 
-* Update server packages using the command: $ sudo apt-get update
-* Upgrade the packages: $ sudo apt-get upgrade
-* Remove un-used packages: $ sudo apt-get autoremove
-* enable unattended updates: $ sudo apt install unattended-upgrades
-* You can also install the user identifier package “finger” : $ sudo apt-get install finger
+* SSH into the server
+* Update the packages list with `sudo apt-get update`
+* Upgrade packages with `sudo apt-get upgrade` and `sudo apt-get dist-upgrade`
+* Remove unused packages with `sudo apt-get autoremove`
+* Enable unattended updates: `sudo apt install unattended-upgrades`
 
 ### 5. Change ssh port from 22 to 2200
-* Open the sshd_config file: $ sudo nano /etc/ssh/ssdh_config
+* Open the sshd_config file with `sudo nano /etc/ssh/ssdh_config`
 * Change the ssh port from 22 to 2200
-* Save the change
-* Restart the ssh service: $ sudo sevice ssh restart 
+* Save the change and restart the ssh service with `sudo sevice ssh restart`
 
-### 6. Update ufw ports and status
-* Allow the new port 2200: $ sudo ufw allow 2200/tcp
-* Allow existing port 22: $ sudo ufw allow 80/tcp
-* All UDP port 123: $ sudo ufw allow 123/udp
-* Check if the ufw is active. If not, do so using the command: $ sudo ufw enable
-* Restart the ssh service: $ sudo service ssh restart
+### 6. Update UFW ports and status
+* Block all incoming with `sudo ufw deny incoming`
+* Allow all outgoing with `sudo ufw allow outgoing`
+* Allow the new ssh port 2200 with `sudo ufw allow 2200/tcp`
+* Delete existing ssh port with `sudo ufw delete allow 22/tcp`
+* Allow http port with `sudo ufw allow 80/tcp`
+* All UDP port 123 with `sudo ufw allow 123/udp`
+* Enable UFW with `sudo ufw enable`
+* Restart the ssh service with `sudo service ssh restart`
 
 ### 7. Configure the local timezone to UTC
-* Configure the time zone: $ sudo dpkg-reconfigure tzdata
+* Change timezone with `sudo timedatectl set-timezone UTC`
 
 ===========================================================================
 
 ## Step B: The “grader” user
 ### 1. Create the grader user
-* Switch role to root using the command: sudo su -
-* Create the grader user: sudo adduser grader
-* Assign sudo status to grader: $ sudo nano /etc/sudoers.d/grader, and type grader ALL=(ALL:ALL) ALL.
-
+* Create the grader user with `sudo adduser grader`
+* Assign sudo status to grader with `sudo nano /etc/sudoers.d/grader`
+* Enter `grader ALL=(ALL:ALL) ALL` and save the file
 
 ### 2. Create a keypair for grader user
-* ssh into the grader user account: $ ssh grader@35.178.90.82 -p 2200 (plus password if any)
-* Create a directory .ssh: $ sudo mkdir .ssh
-* Create a file with the name authorized_keys inside the .ssh directory: $ sudo touch /.ssh/authorized_keys.
-* Change the permission for the .ssh folder: $ sudo chmod 700 .ssh
-* Change the permissions for the authorized_keys file: $ sudo chmod 644 /.ssh/authorized_keys
-* Open a new gitbash window on your device and type the command: $ ssh-keygen
-* Create the file in which to save the key (/c/Users/Hicham/.ssh/id_rsa): c/Users/Hicham/.ssh/authorized_keys
-* The command will create two files in the specified directory. Open the one with the extension PUB using the command: $ sudo cat ~/.ssh/authorized_keys.pub
+* SSH into the grader user account with `ssh grader@35.182.139.132 -p 2200` (plus password if any)
+* Create a directory .ssh with `sudo mkdir .ssh`
+* Create a file with the name authorized_keys with `sudo touch /.ssh/authorized_keys`
+* Change the permission for the .ssh folder with `sudo chmod 700 .ssh`
+* Change the permissions for the authorized_keys file with `sudo chmod 644 /.ssh/authorized_keys`
+* Open a new gitbash window on your device and generate a new key pair `ssh-keygen`
+* Save the key to a file such as `/c/Users/Melvin/.ssh/lightsail_grader`
+* The command will create two files in the specified directory.
+* Open the one with the `.pub` extension with `sudo cat /c/Users/Melvin/.ssh/lightsail_grader.pub`
 * Copy the content
-* Open the authorized_keys file created for the grader user: $ sudo nano /.ssh/authorized_keys
-* Paste the content
-* Reopen the sshd_config file (sudo nano /etc/ssh/sshd_config) and change password authentication from “yes” to “no”.
+* On the server, open the authorized_keys file for the grader user with `sudo nano /.ssh/authorized_keys`
+* Paste the content and save
 
-### 3. Change PermitRootLogin property property
-* Change the PermitRootLogin property to "no" in the sshd_config file: $ sudo /etc/ssh/sshd_config
-
-### 4. Restart the ssh service
-* Restart the ssh service: $ sudo service ssh restart 
+### 3. Disable password authentication and remote root login
+* Reopen the sshd_config file with `sudo nano /etc/ssh/sshd_config`
+* Set `PasswordAuthentication no`
+* Set `PermitRootLogin no`
+* Restart the ssh service with `sudo service ssh restart`
 
 ===========================================================================
 
 ## Step C: Apache2, mod-wsgi, and Git
 ### 1. Install Apache2
-* Connect to your instance with the grader account: $ ssh grader@35.178.90.82 -p 2200 -i ~/.ssh/authorized_keys
+* Connect to your instance with the grader account: $ ssh grader@35.182.139.132 -p 2200 -i ~/.ssh/authorized_keys
 * Install apache2: $ sudo apt-get install apache2.
 
 ### 2. Add mod-wsgi for python environment
@@ -138,7 +139,7 @@ The above list is not exhaustive and varies from one project to the other
 
 	```  
 	<VirtualHost *:80>  
-		ServerName 35.178.90.82 
+		ServerName 35.182.139.132
 		ServerAdmin [ha@mail.com](mail.com)  
 		WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi  
 		<Directory /var/www/FlaskApp/FlaskApp/>  
@@ -175,7 +176,7 @@ The above list is not exhaustive and varies from one project to the other
 	application.secret_key = 'Add your secret key'  
 	```
 ### 3. Change the secret key credentials for Google sign in
-* Get the Host Name for the public IP address (e.g., 35.178.90.82)
+* Get the Host Name for the public IP address (e.g., 35.182.139.132)
 * Update the oauth2 credentials for the app in the Google Console
 * Update the client_secrets.json file with the new “Authorised Javascript origins” and “Authorised redirect URIs” details
 
@@ -183,7 +184,7 @@ The above list is not exhaustive and varies from one project to the other
 * Start Apache2 service with the command: $ sudo service apache2 restart
 
 ### 5. Launch the app in the browser
-* Use the Host Name address [http://ec2-35-178-90-82.eu-west-2.compute.amazonaws.com]( amazonaws.com) (not just the public IP e.g., 35.178.90.82).
+* Use the Host Name address [http://ec2-35-178-90-82.eu-west-2.compute.amazonaws.com]( amazonaws.com) (not just the public IP e.g., 35.182.139.132).
 
 ## References:
 * [https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps](https://www.digitalocean.com/)
