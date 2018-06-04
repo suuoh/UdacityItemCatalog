@@ -1,7 +1,5 @@
 # Udacity Linux Server Configuration Guide
-### This guide is from [@hicham-alaoui](https://github.com/hicham-alaoui).
-### [Link to original guide](https://github.com/hicham-alaoui/ha-linux-server-config).
-
+### Based on [this guide](https://github.com/hicham-alaoui/ha-linux-server-config) by [@hicham-alaoui](https://github.com/hicham-alaoui).
 
 ## Step A: The Lightsail instance  
 ### 1. Create a Lightsail instance in AWS
