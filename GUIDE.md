@@ -29,6 +29,8 @@
 * Remove unused packages with `sudo apt-get autoremove`
 * Enable unattended updates: `sudo apt install unattended-upgrades`
 
+*Make a snapshot of the server, before changing the SSH and firewall settings.*
+
 ### 5. Change ssh port from 22 to 2200
 * Open the sshd_config file with `sudo nano /etc/ssh/ssdh_config`
 * Change the ssh port from 22 to 2200
@@ -69,6 +71,8 @@
 * On the server, open the authorized_keys file for the grader user with `sudo nano /.ssh/authorized_keys`
 * Paste the content and save
 
+*Either make another snapshot at this point or try logging in with the key file first.*
+
 ### 3. Disable password authentication and remote root login
 * Reopen the sshd_config file with `sudo nano /etc/ssh/sshd_config`
 * Set `PasswordAuthentication no`
@@ -78,76 +82,74 @@
 ===========================================================================
 
 ## Step C: Apache2, mod-wsgi, and Git
-### 1. Install Apache2
-* Connect to your instance with the grader account: $ ssh grader@35.182.139.132 -p 2200 -i ~/.ssh/authorized_keys
-* Install apache2: $ sudo apt-get install apache2.
-
-### 2. Add mod-wsgi for python environment
-* use the command: $ sudo apt-get install libapache2-mod-wsgi python-dev
-### 3. Install git 
-* Install git: $ sudo apt-get install git
+### 1. Install packages
+* Connect as the grader account with `ssh grader@35.182.139.132 -p 2200 -i /c/Users/Melvin/.ssh/authorized_keys`
+* Install apache2 with `sudo apt-get install apache2`
+* Install wsgi and python with `sudo apt-get install libapache2-mod-wsgi python`
+* Install git with `sudo apt-get install git`
 
 ===========================================================================
 
-## Step D: Clone the app into Apache2
-### 1. Clone the catalog app (properties app in this example) 
-* Create a new folder under the /www directory: $ sudo mkdir FlaskApp
-* cd into the new FlaskApp directory: $ cd /var/www/FlaskApp
-* Clone you catalog app with the new name "FlaskApp": $ sudo git clone[ https://github.com/hicham-alaoui/properties-catalog.git](http://github.com) FlaskApp. The path to the catalog app should be:/var/www/FlaskApp/FlaskApp. 
+## Step D: Clone the item catalog app
+### 1. Clone the repository
+* cd into /var/www/ directory: `cd /var/www/`
+* Clone the repository with `sudo git clone https://github.com/suuoh/UdacityItemCatalog [alternate name, if desired]`
+* The path to the item catalog app should be `/var/www/UdacityItemCatalog`
 
-### 2. Add the packages used in your app to enable them inside the new environment
-* Install pip: $ sudo apt-get install python-pip.
+### 2. Add the Python packages used in your app
+* Install pip with `sudo apt-get install python-pip`
 * Install Flask and the rest of the packages
-*$ sudo apt-get install python-pip
-* $ sudo pip install Flask
-* $ sudo pip install httplib2
-* $ sudo pip install sqlalchemy
-* $ sudo pip install oauth2client
-* $ sudo pip install --upgrade oauth2client
-* $ sudo pip install sqlalchemy
-* $ sudo pip install sqlalchemy_utils
-* $ sudo pip install requests
-* $ sudo pip install render_template
-* $ sudo pip install redirect  
-The above list is not exhaustive and varies from one project to the other
+* `sudo pip install Flask`
+* `sudo pip install httplib2`
+* `sudo pip install sqlalchemy`
+* `sudo pip install psycopg2`
+* `sudo pip install oauth2client`
+* `sudo pip install --upgrade oauth2client`
+* `sudo pip install sqlalchemy`
+* `sudo pip install sqlalchemy_utils`
+* `sudo pip install requests`
+* `sudo pip install render_template`
+* `sudo pip install redirect`
+*The above list is not exhaustive and varies from one project to the other*
 
 ### 3. Rename and edit the application python file
-* Rename the cloned application python file from its current name(e.g., project.py or catalog.py)  to __init__py
-* In the __init__.py edit the client_secrects.json file path to : /var/www/FlaskApp/FlaskApp/client_secrets.json 
+* Rename the main application  file from its current name (e.g. application.py or catalog.py) to `__init__.py`
+* In the `__init__.py`, edit the `client_secrects.json` file path to `/var/www/UdacityItemCatalog/client_secrets.json`
 
 ### 4. Set up the database  
-* Install PostgreSQL : $ sudo apt-get install postgresql
-* Check if no remote connections are allowed:  sudo nano /etc/postgresql/9.5/main/pg_hba.conf
-* Login as user "postgres": $ sudo su - postgres
-* Get into postgreSQL shell: psql
-* Create a new database named "catalog" and create a new user named "catalog" in postgreSQL shell: postgres=# CREATE DATABASE catalog;
-* postgres=# CREATE USER catalog
-* Set a password for user catalog: postgres=# ALTER ROLE catalog WITH PASSWORD 'password'
-* Give user "catalog" permission to "catalog" application database: postgres=# GRANT ALL PRIVILEGES ON DATABASE catalog TO catalog
-* Quit postgreSQL: postgres=# \q
-* Exit from user "postgres": exit
-* Change the path to the database in the `__init__.py` and the database_setup.py (properties_db.py in this project) files to : create_engine('postgresql://catalog:password@localhost/catalog')
-* Install psycopg2: sudo apt-get -qqy install postgresql python-psycopg2
-* Create database schema: sudo python database_setup.py
+* Install PostgreSQL with `sudo apt-get install postgresql`
+* Check if no remote connections are allowed `sudo nano /etc/postgresql/9.5/main/pg_hba.conf`
+* Login as the database user postgres with `sudo su - postgres`
+* Get into PostgreSQL shell with `psql`
+* Create a new "catalog" user with `CREATE USER catalog WITH PASSWORD [password];`
+* Set permissions with `ALTER USER catalog CREATEDB;`
+* Create a new "itemcatalog" database with `CREATE DATABASE itemcatalog WITH OWNER catalog;`
+* Give user "catalog" permission to "itemcatalog" application database with `GRANT ALL PRIVILEGES ON DATABASE itemcatalog TO catalog;`
+* Quit PostgreSQL with `\q`
+* Exit the postgres user and switch back to your original user with `exit`
+* Change the database path in `__init__.py`, `database_setup.py`, and `lotsofitems.py` to `create_engine('postgresql://catalog:password@localhost/itemcatalog')`
+* Set up the database schema with `sudo python database_setup.py`
+* Add initial items with `sudo python lotsofitems.py`
 
 ===========================================================================
 
-## Final step: Fire the app to the web
+## Step E: Configure the web app
 ### 1. Create a new Virtual Host
-* Create the FlaskApp.conf file: $ sudo nano /etc/apache2/sites-available/FlaskApp.conf
-* Paste the text below inside the FlaskApp.conf file:  
-
+* Create the itemcatalog.conf file with `sudo nano /etc/apache2/sites-available/itemcatalog.conf`
+* Paste the text below inside the itemcatalog.conf file:  
 	```  
 	<VirtualHost *:80>  
 		ServerName 35.182.139.132
-		ServerAdmin [ha@mail.com](mail.com)  
-		WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi  
-		<Directory /var/www/FlaskApp/FlaskApp/>  
+		ServerAlias [domain]
+		ServerAdmin [email]
+		WSGIDaemonProcess itemcatalog user=grader group=grader threads=5
+		WSGIScriptAlias / /var/www/UdacityItemCatalog/itemcatalog.wsgi  
+		<Directory /var/www/UdacityItemCatalog/>  
 			Order allow,deny  
 			Allow from all  
 		</Directory>  
-		Alias /static /var/www/FlaskApp/FlaskApp/static  
-		<Directory /var/www/FlaskApp/FlaskApp/static/>  
+		Alias /static /var/www/UdacityItemCatalog/static  
+		<Directory /var/www/UdacityItemCatalog/static/>  
 			Order allow,deny  
 			Allow from all  
 		</Directory>  
@@ -156,37 +158,33 @@ The above list is not exhaustive and varies from one project to the other
 		CustomLog ${APACHE_LOG_DIR}/access.log combined  
 	</VirtualHost>  
 	```  
-	*Remember to change the ServerName and ServiceAdmin details to yours. 
+	*Remember to change the ServerName, ServerAlias, and ServiceAdmin details to yours, as well as the paths.*
 
-* Disable the default virtual host:  $ sudo a2dissite 000-default.conf
-* Enable the new virtual host: $ sudo a2ensite FlaskApp.conf
+* Disable the default virtual host with `sudo a2dissite 000-default.conf`
+* Enable the new virtual host `sudo a2ensite itemcatalog.conf`
 
 ### 2. Create a wsgi file for the app. 
-* The wsgi file sits inside the parent FlaskApp directory: $ sudo nano /var/www/FlaskApp/flaskapp.wsgi
-* Paste the text below inside the flaskapp.wsgi file:
-
+* The wsgi file sits inside the parent directory: `sudo nano /var/www/UdacityItemCatalog/itemcatalog.wsgi`
+* Paste the text below inside the itemcatalog.wsgi file:
 	```  
 	#!/usr/bin/python  
 	import sys  
 	import logging  
 	logging.basicConfig(stream=sys.stderr)  
-	sys.path.insert(0,"/var/www/FlaskApp/")  
+	sys.path.insert(0,"/var/www/")  
 
-	from FlaskApp import app as application  
+	from UdacityItemCatalog import app as application  
 	application.secret_key = 'Add your secret key'  
 	```
 ### 3. Change the secret key credentials for Google sign in
-* Get the Host Name for the public IP address (e.g., 35.182.139.132)
-* Update the oauth2 credentials for the app in the Google Console
-* Update the client_secrets.json file with the new “Authorised Javascript origins” and “Authorised redirect URIs” details
+* Set up a domain for your Lightsail IP or reverse lookup the host name
+* Go to the [Credentials section of the Google Developers Console](https://console.developers.google.com/apis/credentials)
+* Update the `Authorised JavaScript origins` for the app
+* `Authorised redirect URIs` is not used, but you can update it as well
+* Update the `client_secrets.json` file with the new `Authorised Javascript origins` and `Authorised redirect URIs` details
 
 ### 4. Restart the Apache server
-* Start Apache2 service with the command: $ sudo service apache2 restart
+* Restart the Apache2 service with `sudo service apache2 restart`
 
 ### 5. Launch the app in the browser
-* Use the Host Name address [http://ec2-35-178-90-82.eu-west-2.compute.amazonaws.com]( amazonaws.com) (not just the public IP e.g., 35.182.139.132).
-
-## References:
-* [https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps](https://www.digitalocean.com/)
-* [https://github.com/kongling893/Linux-Server-Configuration-UDACITY](https://github.com)
-* [https://stackoverflow.com/](https://stackoverflow.com)
+* Visit your app using the domain name, not the IP Address
