@@ -7,6 +7,7 @@ A custom Flask application that stores and displays a variety of video games wit
 **Domain Name:** lightsail.melvin.io  
 **SSH Port:** 2200  
 **Item Catalog**: http://lightsail.melvin.io/  
+**SSH User:** grader
 **PostgreSQL User**: catalog  
 
 ### Installed Software  
