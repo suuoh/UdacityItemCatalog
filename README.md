@@ -1,6 +1,7 @@
 # Linux Server Configuration  
 A custom Flask application that stores and displays a variety of video games with assorted categories. Includes functionality to create, edit, and delete games, along with user login and authentication.  
 [View Item Catalog Web App](http://lightsail.melvin.io/)  
+[View setup guide](GUIDE.md)
 
 ### Amazon Lightsail  
 **IP:** 35.182.139.132  
