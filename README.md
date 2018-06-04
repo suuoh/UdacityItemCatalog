@@ -25,6 +25,8 @@ A custom Flask application that stores and displays a variety of video games wit
 * Adjusted UFW to only accept incoming connections on ports 80, 123, and 2200  
 * Created `grader` user account with SSH key, to be provided in project submission notes  
 * Set default timezone to `UTC`  
+* Changed SQLite database to PostgreSQL
+* Fixed paths from localhost to /var/www/UdacityItemCatalog
 
 ### Credits
-*https://github.com/callforsky/udacity-linux-configuration
+* https://github.com/callforsky/udacity-linux-configuration
