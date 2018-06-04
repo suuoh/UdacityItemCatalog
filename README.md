@@ -8,7 +8,9 @@ A custom Flask application that stores and displays a variety of video games wit
 **SSH Port:** 2200  
 **Item Catalog**: http://lightsail.melvin.io/  
 **SSH User:** grader
+**SSH Password:** udacityudacity *(SSH key only)*
 **PostgreSQL User**: catalog  
+**PostgreSQL Password**: I8vke78B9a *(local only)*
 
 ### Installed Software  
 * apache2  
