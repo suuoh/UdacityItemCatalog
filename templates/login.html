@@ -1,0 +1,47 @@
+{% extends "header.html" %}
+{% block content %}
+<h1>Please sign in to continue:</h1>
+<br />
+<div id="signinButton">
+  <span class="g-signin"
+    data-scope="openid email"
+    data-clientid="881556776531-60ec62bkobm9jmmdlsgk6nsvbuk9ova5.apps.googleusercontent.com"
+    data-redirecturi="postmessage"
+    data-accesstype="offline"
+    data-cookiepolicy="single_host_origin"
+    data-callback="signInCallback"
+    data-approvalprompt="force">
+  </span>
+</div>
+<div id="result"></div>
+<script>
+  function signInCallback(authResult) {
+    if (authResult['code']) {
+      // Hide sign in button when user is authorized
+      $("#signinButton").attr('style', 'display: none');
+  
+      // Send one-time-use code to server. If server responds, display successful msesage and redirect
+      $.ajax({
+        type: 'POST',
+        url: '/gconnect?state={{STATE}}',
+        processData: false,
+        contentType: 'application/octet-stream; charset=utf-8',
+        data: authResult['code'],
+        success: function(result) {
+          if (result) {
+            $('#result').html('Login successful!<br />' + result + '<br />Redirecting...')
+            setTimeout(function() {
+              window.location.href = "/genres";
+            }, 3000);
+          } else if (authResult['error']) {
+            console.log("There was an error: " + authResult['error']);
+          } else {
+            $('#result').html('Failed to make server-side call. Check configuration and console.');
+          }
+        }
+      });
+    }
+  
+  }
+</script>
+{% endblock %}

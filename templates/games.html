@@ -1,0 +1,44 @@
+{% extends "header.html" %}
+{% block content %}
+<div class="row banner">
+  <div class="col-md-11 col-md-offset-1 padding-none">
+    <h1>
+      {{ genre.name }}
+    </h1>
+  </div>
+</div>
+<div class="flash">
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li> <strong> {{ message }} </strong> </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+</div>
+<div>
+  <a href="{{ url_for('newGame', genre_id=genre.id) }}">Create New Game</a>
+</div>
+{% if games !=[] %} 
+<div class="row">
+  <div class="col-md-1"></div>
+  <div class="col-md-3">
+    {% for g in games %}
+    <div class="">
+      <h3>{{ g.name }}</h3>
+      <h6>{{ g.price }}</h6>
+      <p>Description: {{ g.description }}</p>
+      <p>Developer: {{ g.developer }}</p>
+      <p>Release Date: {{ g.release_date }}</p>
+      <p>Platform: {{ g.platform }}</p>
+      <a href="{{ url_for('editGame', genre_id=genre.id, game_id=g.id) }}">Edit</a> | 
+      <a href="{{ url_for('deleteGame', genre_id=genre.id, game_id=g.id) }}">Delete</a>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="col-md-1"></div>
+</div>
+{% endif %}
+{% endblock %}

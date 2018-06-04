@@ -1,0 +1,54 @@
+{% extends "header.html" %}
+{% block content %}
+<div class="row divider">
+  <div class="col-md-12"></div>
+</div>
+<div class="row banner">
+  <div class="col-md-11 col-md-offset-1 p-0">
+    <h1>Edit Video Game</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 col-md-offset-1 py-3">
+    <form action="{{ url_for('editGame', genre_id=genre.id, game_id=game.id) }}" method="POST">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type ="text" maxlength="250" class="form-control" name="name" value="{{ game.name }}">
+        <label for="description">Description:</label>
+        <textarea class="form-control" maxlength="250" rows="3" name="description">{{ game.description }}</textarea>
+        <label for="price">Price:</label>
+        <div class="input-group">
+          <div class="input-group-addon">$</div>
+          <input type ="text" class="form-control" maxlength="10" name="price" value="{{ game.price }}">
+        </div>
+        <label for="developer">Developer:</label>
+        <input type ="text" maxlength="250" class="form-control" name="developer" value="{{ game.developer }}">
+        <label for="release_date">Release Date:</label>
+        <input type ="date" class="form-control" name="release_date" value="{{ game.release_date.strftime('%Y-%m-%d') }}">
+        <label for="platform">Platform:</label>
+        <div class="radio">
+          <label>
+          <input type="radio" name="platform" value="PC" {% if game.platform == 'PC' %}checked{% endif %}>PC
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+          <input type="radio" name="platform" value="XBOX" {% if game.platform == 'XBOX' %}checked{% endif %}>XBOX
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+          <input type="radio" name="platform" value="PS4" {% if game.platform == 'PS4' %}checked{% endif %}>PS4
+          </label>
+        </div>
+        
+        <label for="genre">Genre:</label>
+        <input type ="text" maxlength="250" class="form-control" name="genre" value="{{ genre.name }}" readonly> <br />
+
+        <button type="submit" class="btn btn-default" id="submit" type="submit">
+        Edit Game</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
