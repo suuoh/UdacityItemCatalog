@@ -13,6 +13,10 @@ A custom Flask application that stores and displays a variety of video games wit
 * apache2  
 * libapache2-mod-wsgi  
 * postgresql  
+* python-psycopg2  
+* python-flask  
+* python-sqalchemy  
+* python-pip  
 
 ### Other Changes  
 * Adjusted UFW to only accept incoming connections on ports 80, 123, and 2200  
