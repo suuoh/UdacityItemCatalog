@@ -7,10 +7,10 @@ A custom Flask application that stores and displays a variety of video games wit
 **Domain Name:** lightsail.melvin.io  
 **SSH Port:** 2200  
 **Item Catalog**: http://lightsail.melvin.io/  
-**SSH User:** grader
-**SSH Password:** udacityudacity *(SSH key only)*
-**PostgreSQL User**: catalog  
-**PostgreSQL Password**: I8vke78B9a *(local only)*
+**SSH User:** grader *(SSH key only)*  
+**SSH Password:** udacityudacity *(SSH key only)*  
+**PostgreSQL User**: catalog *(local only)*  
+**PostgreSQL Password**: I8vke78B9a *(local only)*  
 
 ### Installed Software  
 * apache2  
@@ -23,10 +23,12 @@ A custom Flask application that stores and displays a variety of video games wit
 
 ### Other Changes  
 * Adjusted UFW to only accept incoming connections on ports 80, 123, and 2200  
+* Changed default SSH port to 2200
 * Created `grader` user account with SSH key, to be provided in project submission notes  
 * Set default timezone to `UTC`  
-* Changed SQLite database to PostgreSQL
-* Fixed paths from localhost to /var/www/UdacityItemCatalog
+* Changed SQLite database to PostgreSQL (`postgresql://user:password@localhost/database')` in `database_setup.py`, `lotsofgames.py`, and `__init__.py`
+* Updated `client_secrets.json` path to `/var/www/UdacityItemCatalog` in `__init__.py`
+* Updated packages with `apt-get update`, `apt-get upgrade`, and `apt-get dist-upgrade`
 
 ### Credits
 * https://github.com/hicham-alaoui/ha-linux-server-config/
