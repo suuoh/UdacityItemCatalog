@@ -30,3 +30,4 @@ A custom Flask application that stores and displays a variety of video games wit
 
 ### Credits
 * https://github.com/callforsky/udacity-linux-configuration
+* https://github.com/petergns/linux_server_catalog
