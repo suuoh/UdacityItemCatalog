@@ -1,5 +1,6 @@
 # Udacity Linux Server Configuration Guide
-### This guide is from [@hicham-alaoui](https://github.com/hicham-alaoui). [Link to original guide](https://github.com/hicham-alaoui/ha-linux-server-config).
+### This guide is from [@hicham-alaoui](https://github.com/hicham-alaoui).
+[Link to original guide](https://github.com/hicham-alaoui/ha-linux-server-config).
 
 
 ## Step A: The Lightsail instance  
