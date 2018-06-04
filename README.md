@@ -29,5 +29,6 @@ A custom Flask application that stores and displays a variety of video games wit
 * Fixed paths from localhost to /var/www/UdacityItemCatalog
 
 ### Credits
+* https://github.com/hicham-alaoui/ha-linux-server-config/
 * https://github.com/callforsky/udacity-linux-configuration
 * https://github.com/petergns/linux_server_catalog
